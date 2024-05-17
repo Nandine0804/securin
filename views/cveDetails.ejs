@@ -1,0 +1,243 @@
+<!-- cveDetails.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVE Details</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            font-weight: 400;
+        }
+        
+        body {
+            background-color: #dbdfe0;
+            width: 100%;
+            height: 100vh;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            margin-top: 10px;
+            font-size: 19px;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        
+        h3 {
+            font-weight: 21px;
+            margin-top: 10px;
+        }
+        /* Table styles */
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            padding: 20px 20px;
+            margin-top: 10px;
+        }
+        
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .container {
+            padding: 30px;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        /* Button styles */
+        
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        /* Select styles */
+        
+        select {
+            padding: 8px;
+            width: 150px;
+        }
+        
+        .container {
+            padding: 30px 30px;
+        }
+        
+        .filter {
+            margin-bottom: 10px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .pagination a {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            text-decoration: none;
+        }
+        
+        a {
+            color: purple;
+        }
+        
+        .score {
+            display: flex;
+            flex-direction: row;
+            gap: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <center>
+            <h1>CVE Details</h1>
+        </center>
+        <h1>
+            <%= cve.cve_id %>
+        </h1>
+
+        <h2>Description</h2>
+        <h3>
+            <% cve.descriptions.forEach(description=> { %>
+                <p>
+                    <%= description.value %>
+                </p>
+
+                <% }); %>
+        </h3>
+        <h2>CVSS V2 Metrics</h2>
+        <% cve.metrics.cvssMetricV2.forEach(metric=> { %>
+            <div class="score">
+                <h3> BaseScore :
+                    <%= metric.cvssData.baseScore %>
+                </h3>
+                <h3> Base Severity :
+                    <%= metric.baseSeverity %>
+                </h3>
+
+            </div>
+            <h3> Vector String :
+                <%= metric.cvssData.vectorString %>
+            </h3>
+
+            <% }); %>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Access Vector</th>
+                            <th>Access Complexity</th>
+                            <th>Authentication</th>
+                            <th>Confidentiality Impact</th>
+                            <th>Integrity Impact</th>
+                            <th>Availability Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% cve.metrics.cvssMetricV2.forEach(metric=> { %>
+                            <tr>
+                                <td>
+                                    <%= metric.cvssData.accessVector %>
+                                </td>
+
+                                <td>
+                                    <%= metric.cvssData.accessComplexity %>
+                                </td>
+                                <td>
+                                    <%= metric.cvssData.authentication %>
+                                </td>
+                                <td>
+                                    <%= metric.cvssData.confidentialityImpact %>
+                                </td>
+                                <td>
+                                    <%= metric.cvssData.integrityImpact %>
+                                </td>
+                                <td>
+                                    <%= metric.cvssData.availabilityImpact %>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+                <h2>Scores : </h2>
+                <% cve.metrics.cvssMetricV2.forEach(metric=> { %>
+
+
+                    <h3> Exploitability Score :
+                        <%= metric.exploitabilityScore %>
+                    </h3>
+                    <h3> Impact Score :
+                        <%= metric.impactScore%>
+                    </h3>
+                    <% }); %>
+                        <h2>CPE Details</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Vulnerable</th>
+                                    <th>Criteria</th>
+                                    <th>Match Criteria ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cve.configurations.forEach(configuration=> { %>
+                                    <% configuration.nodes.forEach(node=> { %>
+                                        <% node.cpeMatch.forEach(cpe=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= cpe.vulnerable %>
+                                                </td>
+                                                <td>
+                                                    <%= cpe.criteria %>
+                                                </td>
+                                                <td>
+                                                    <%= cpe.matchCriteriaId %>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                                <% }); %>
+                                                    <% }); %>
+                            </tbody>
+                        </table>
+    </div>
+</body>
+
+</html>

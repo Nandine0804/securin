@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVE Data</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        
+        body {
+            background-color: #dbdfe0;
+            width: 100%;
+            height: 100vh;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid rgb(22, 32, 38);
+            text-align: left;
+        }
+        
+        th {
+            background-color: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        /* Button styles */
+        
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        select {
+            padding: 8px;
+            width: 150px;
+        }
+        
+        .container {
+            padding: 30px 30px;
+        }
+        
+        .filter {
+            margin-bottom: 10px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .pagination a {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>CVE Data</h1>
+        <p>Total Records: 240988
+
+        </p>
+
+        <div class="filter">
+            <div>
+                <label for="resultsPerPage">Results Per Page:</label>
+                <select id="resultsPerPage" onchange="changePerPage()">
+                    <option value=""></option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                </select>
+            </div>
+            <div><button onclick="sortTable('lastModified')">Sort the Last Modified Date</button>
+                <button onclick="sortTable('published')">Sort the Published Date</button>
+            </div>
+        </div>
+        <table id="cveTable">
+            <thead>
+                <tr>
+                    <th>CVE ID</th>
+                    <th>Identifier</th>
+                    <th>Last Modified Date</th>
+                    <th>Published Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% cves.forEach(cve=> { %>
+                    <tr>
+                        <td>
+                            <a href="/cves/<%= cve._id %>">
+                                <%= cve.cve_id %>
+                            </a>
+
+                        </td>
+                        <td>
+                            <%= cve.sourceIdentifier %>
+                        </td>
+                        <td>
+                            <%= cve.lastModified.toISOString().split('T')[0] %>
+                        </td>
+                        <td>
+                            <%= cve.published.toISOString().split('T')[0] %>
+                        </td>
+                        <td>
+                            <%= cve.vulnStatus %>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function sortTable(columnName) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('sortBy', columnName);
+            const currentSortOrder = urlParams.get('sortOrder') || 'asc';
+            urlParams.set('sortOrder', currentSortOrder === 'asc' ? 'desc' : 'asc');
+            window.location.href = window.location.pathname + '?' + urlParams.toString();
+        }
+
+        function changePerPage() {
+            const resultsPerPage = document.getElementById('resultsPerPage').value;
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('limit', resultsPerPage);
+            window.location.href = window.location.pathname + '?' + urlParams.toString();
+        }
+    </script>
+</body>
+
+</html>
